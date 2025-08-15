@@ -17,6 +17,6 @@ function typeWriterEffect(elementId, text, delay = 100, loop = false) {
     }
     type();
 }
+typeWriterEffect("present-day", "Present Day, Present Time...", 100, true);
 
-typeWriterEffect("present-day", "Present Day, Present Time", 100, true);
 
