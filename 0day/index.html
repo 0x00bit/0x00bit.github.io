@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>0day</title>
+</head>
+<body>
+    <style>
+        body {
+            background-color: black;
+            text-align: center;
+            color: white;
+            font-family: 'Fira Mono', monospace;
+        }
+
+        .image {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }  
+
+        a {
+            color: white;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #29c107; /* Accent color on hover */
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: #444;
+            margin: 20px 0;
+        }
+
+        footer {
+            margin-top: 40px;
+            padding: 10px 0;
+            border-top: 1px solid #444;
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        h1, h2, h3 {
+            color: #29c107; /* Accent color for headings */
+        }
+
+        p {
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            text-align: justify;
+            text-justify: inter-word;
+        }
+        .title {
+            margin-top: 20px;
+        }
+
+        .image {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+    </style>
+    <div class="title">
+        <img src="assets/image.png" alt="0day Image" width="600">
+        <h2>0day Write-up</h2>
+        <hr>
+    </div>
+
+    <div class="enum">
+        <h3>ENUMERATION</h3>
+        <p>
+At the beginning, we face this webpage. It looks like a normal page. We must remember that this is a medium-level CTF, so we’ll barely get hints from things like <code>robots.txt</code> or by just looking at the page source code.
+        
+        <img src="assets/enum1.png" alt="enumeration" style="width: 700px; height: 400px;">
+        </p>
+    </div>
+    <br/>
+
+    <div class="reconnaissance">
+        <h3>RECONNAISSANCE</h3>
+        <p>
+The "beans and rice" for a normal CTF challenge like this are: <b>NMAP</b> (essential) and some tool for web enumeration (I prefer <b>GOBUSTER</b>). After some time, we got something: ports <b>80</b> and <b>22</b>.
+This output gives us a hint: either it will be a web vulnerability (much more likely — I’d say 98% chance), or it will be an SSH vulnerability (much less likely due to the complexity of the cryptography involved).
+        
+        <img src="assets/enum2.png" alt="nmap results" style="width: 700px; height: 400px;">
+        <br>
+        <img src="assets/enum3.png" alt="nmap results" style="width: 700px; height: 400px;">
+        </p>
+    </div>
+    <br/>
+
+    <div class="webenum">
+        <h3>WEB RECONNAISSANCE</h3>
+        <p>
+I decided to look for web directories to see if I could find something. I started GOBUSTER with the <code>big.txt</code> list. After some time, I found some interesting stuff in the output.
+<br><br>
+First of all, there was a <b>backup directory</b>, which can indicate that some careless sysadmin forgot to move it to the right place. Inside this directory, we found something very interesting: an <b>SSH key</b>.
+        
+        <img src="assets/webenum1.png" alt="gobuster results" style="width: 700px; height: 300px;">
+        <br>
+        <img src="assets/webenum2.png" alt="gobuster results" style="width: 700px; height: 300px;">
+        </p>
+    </div>
+    <br/>
+
+    <div class="ssh">
+        <h3>SSH ATTEMPT</h3>
+        <p>
+Since I didn’t know any valid user at this point, I tried the most obvious one: <b>root</b>.
+<br><br>
+And well, we got pranked. At the beginning of this write-up, I said I’d ignore things like <code>robots.txt</code> because it’s a medium-level CTF (not really a good practice, since we should never underestimate the target). And yep, I got scammed by this, lmao.
+        
+        <img src="assets/sshfail.png" alt="ssh fail" style="width: 700px; height: 400px;">
+        <br>
+        <img src="assets/sshfail2.png" alt="ssh fail" style="width: 700px; height: 400px;">
+
+        </p>
+    </div>
+
+
+    <div class="turtle">
+        <h3>TURTLE CLUE</h3>
+        <p>
+I also found this turtle picture, which could mean there’s something hidden in the image. But I left it for later since there was still a lot of other stuff to check.
+<br><br>
+I kept investigating and checked each directory, but the only ones that caught my attention were <b>uploads</b> and <b>cgi-bin</b>. I grabbed a <a src="https://gist.githubusercontent.com/giper45/35c482a1c558e2646fdccc5cb0faea6b/raw/e9b5d66f886941e291509bee1ee1d5f9252ae99e/cgis.txt
+">CGI-BIN wordlist</a> for enumeration and found something: <b>test.cgi</b>.
+       
+        <img src="assets/turtle.png" alt="turtle image" style="width: 700px; height: 400px;">
+        <br>
+        <img src="assets/reverseshell1.png" alt="reverse shell" style="width: 700px; height: 400px;">
+        <br>
+        <img src="assets/xpl1.png" alt="reverse shell" style="width: 700px; height: 400px;">
+         </p>
+    </div>
+    <br/>
+
+    <div class="exploit">
+        <h3>EXPLOITATION</h3>
+        <p>
+After reading a bit about how <a src="https://www.exploit-db.com/docs/english/48112-the-shellshock-attack-%5Bpaper%5D.pdf?ref=benheater.com">CGI BINS</a> works and looking at some payloads, <a src="https://medium.com/@S3Curiosity/unmasking-vulnerabilities-a-deep-dive-into-shellshock-exploitation-645fac00cce8">I found one that finally worked. I adapted and tested it — and it worked!</a>
+<br><br>
+I then wrote a reverse shell, hosted it on a Python web server, and forced the target to connect to my port 1337 where I was listening with Netcat (or just <b>nc</b> for the intimates).
+<br><br>
+I uploaded the reverse shell into <code>/tmp</code>, hoping I had the right permissions for writing and execution. Once again — it worked!
+        <br>
+        <img src="assets/xpl2.png" alt="reverse shell" style="width: 700px; height: 300px;">
+        <br>
+        <img src="assets/xpl3.png" alt="reverse shell" style="width: 700px; height: 300px;">
+        <br>
+        <img src="assets/xpl4.png" alt="reverse shell" style="width: 700px; height: 300px;">
+
+        </p>
+    </div>
+    <br/>
+
+    <div class="privilege">
+        <h3>PRIVILEGE ESCALATION</h3>
+        <p>
+Once inside, I followed the basics described in <b><a src="https://blog.g0tmi1k.com/2011/08/basic-linux-privilege-escalation/">g0tm1lk’s paper</a></b>. My usual order is: system & kernel version (to check for things like Dirty Pipe), suids, running processes, crons, history files, databases, and network.
+<br><br>
+I checked <code>/etc/passwd</code>, hoping to find another valid user besides root and grab the <code>user.txt</code> flag. I also got the kernel version, checked if it was vulnerable — and it was.
+<br>
+<img src="assets/privesc1.png" alt="privilege escalation" style="width: 700px; height: 400px;">
+<br>
+<img src="assets/privesc2.png" alt="privilege escalation" style="width: 700px; height: 400px;">
+I found an exploit on ExploitDB, but of course, it wouldn’t matter if GCC wasn’t installed. Luckily, GCC was there, but when I tried to compile, I got an error.
+        <br>
+        <img src="assets/privesc3.png" alt="privilege escalation" style="width: 700px; height: 400px;">
+I looked at the PATH variable, and it was a mess. So I copied mine, exported it to the server, and GCC started working as expected.
+        
+
+        <br>
+        <img src="assets/path.png" alt="privilege escalation" style="width: 700px; height: 400px;">
+        <br>
+
+    </div>
+    <br/>
+
+    <div class="pwned">
+        <h3>PWNED!</h3>
+        <p>
+Once compiled, we got root, baby. 
+<br><br>
+I had to redo this machine to write this full report, but the first time I did it I struggled a lot and wasted tons of time checking random directories or chasing that stupid turtle for clues.
+       <img src="assets/root.png" alt="privilege escalation" style="width: 700px; height: 400px;">    
+        </p>
+    </div>
+    <hr>
+    <ul>
+        <li><a href="https://tryhackme.com/p/0day">0day challenge</a></li>
+        <li><a href="">Other Write-ups</a></li>
+    </ul>
+</body>
+</html>
