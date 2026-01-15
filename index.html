@@ -34,27 +34,7 @@
         }
         .tagline {
             color: var(--muted);
-        }
-        .cursor {
-            position: fixed;
-            width: 32px;
-            height: 32px;
-            background: url("cursor.png") no-repeat center;
-            background-size: contain;
-            pointer-events: none;
-            z-index: 9999;
-            image-rendering: pixelated;
-        }
-        
-        .cursor.red {
-            filter: drop-shadow(-2px 0 red);
-            opacity: 0.8;
-        }
-        
-        .cursor.cyan {
-            filter: drop-shadow(2px 0 cyan);
-            opacity: 0.8;
-        }    
+        } 
         nav {
             display: flex;
             justify-content: center;
@@ -165,41 +145,12 @@
     <div class="linkedin">
         <a href="https://www.linkedin.com/in/magnus-jr/" target="_blank">My LinkedIn</a>
     </div>
-    <div class="cursor base"></div>
-    <div class="cursor red"></div>
-    <div class="cursor cyan"></div>
-
     <footer>
     </footer>
-    <script>
-    const base = document.querySelector(".cursor.base");
-    const red = document.querySelector(".cursor.red");
-    const cyan = document.querySelector(".cursor.cyan");
-    
-    let x = 0, y = 0;
-    
-    document.addEventListener("mousemove", (e) => {
-        x = e.clientX;
-        y = e.clientY;
-    });
-    
-    setInterval(() => {
-        const glitch = Math.random() > 0.8 ? 8 : 2;
-    
-        base.style.transform = `translate(${x}px, ${y}px)`;
-    
-        red.style.transform = `
-            translate(${x - Math.random() * glitch}px, ${y + Math.random() * glitch}px)
-        `;
-    
-        cyan.style.transform = `
-            translate(${x + Math.random() * glitch}px, ${y - Math.random() * glitch}px)
-        `;
-    }, 30);
-    </script>
 </body>
     
 </html>
+
 
 
 
