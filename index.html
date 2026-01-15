@@ -20,6 +20,7 @@
             padding: 20px;
             max-width: 800px;
             margin: 0 auto;
+            cursor: none;
         }
         header {
             text-align: center;
@@ -35,6 +36,17 @@
             color: var(--muted);
             margin-bottom: 20px;
         }
+        #glitch-cursor {
+        position: fixed;
+        width: 16px;
+        height: 16px;
+        border: 2px solid #00ffcc;
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 9999;
+        transform: translate(-50%, -50%);
+        box-shadow: 0 0 8px #00ffcc;
+        }       
         nav {
             display: flex;
             justify-content: center;
@@ -146,73 +158,39 @@
     <div class="linkedin">
         <a href="https://www.linkedin.com/in/magnus-jr/" target="_blank">My LinkedIn</a>
     </div>
-
+    <div id="glitch-cursor"></div>
     <footer>
-        © 2025 Magnus Junior. All rights reserved.
-        Last update: 18th December of 2025-
-        <br>
     </footer>
     <script>
-        const canvas = document.getElementById("snow");
-        const ctx = canvas.getContext("2d");
-        
-        let width, height;
-        let flakes = [];
-        
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        }
-        window.addEventListener("resize", resize);
-        resize();
-        
-        function createFlakes(count = 120) {
-            flakes = [];
-            for (let i = 0; i < count; i++) {
-                flakes.push({
-                    x: Math.random() * width,
-                    y: Math.random() * height,
-                    r: Math.random() * 1.5 + 0.5,
-                    d: Math.random() + 0.5,
-                    s: Math.random() * 0.5 + 0.2
-                });
-            }
-        }
-        createFlakes();
-        
-        function draw() {
-            ctx.clearRect(0, 0, width, height);
-            ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
-            ctx.beginPath();
-            for (let f of flakes) {
-                ctx.moveTo(f.x, f.y);
-                ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-            }
-            ctx.fill();
-            move();
-        }
-        
-        function move() {
-            for (let f of flakes) {
-                f.y += Math.pow(f.d, 2) + f.s;
-                f.x += Math.sin(f.y * 0.01) * 0.3;
-        
-                if (f.y > height) {
-                    f.y = -5;
-                    f.x = Math.random() * width;
-                }
-            }
-        }
-        
-        function animate() {
-            draw();
-            requestAnimationFrame(animate);
-        }
-        animate();
+const cursor = document.getElementById("glitch-cursor");
+
+let mouseX = 0;
+let mouseY = 0;
+let glitchX = 0;
+let glitchY = 0;
+
+document.addEventListener("mousemove", (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+});
+
+// Glitch loop
+setInterval(() => {
+    // Random glitch offsets
+    const glitchIntensity = Math.random() > 0.7 ? 15 : 3;
+
+    glitchX = (Math.random() - 0.5) * glitchIntensity;
+    glitchY = (Math.random() - 0.5) * glitchIntensity;
+
+    cursor.style.left = mouseX + glitchX + "px";
+    cursor.style.top = mouseY + glitchY + "px";
+}, 30);
+
     </script>
 </body>
     
 </html>
+
 
 
 
