@@ -34,19 +34,26 @@
         }
         .tagline {
             color: var(--muted);
-            margin-bottom: 20px;
+        .cursor {
+            position: fixed;
+            width: 32px;
+            height: 32px;
+            background: url("cursor.png") no-repeat center;
+            background-size: contain;
+            pointer-events: none;
+            z-index: 9999;
+            image-rendering: pixelated;
         }
-        #glitch-cursor {
-        position: fixed;
-        width: 16px;
-        height: 16px;
-        border: 2px solid #00ffcc;
-        border-radius: 50%;
-        pointer-events: none;
-        z-index: 9999;
-        transform: translate(-50%, -50%);
-        box-shadow: 0 0 8px #00ffcc;
-        }       
+        
+        .cursor.red {
+            filter: drop-shadow(-2px 0 red);
+            opacity: 0.8;
+        }
+        
+        .cursor.cyan {
+            filter: drop-shadow(2px 0 cyan);
+            opacity: 0.8;
+        }    
         nav {
             display: flex;
             justify-content: center;
@@ -157,38 +164,42 @@
     <div class="linkedin">
         <a href="https://www.linkedin.com/in/magnus-jr/" target="_blank">My LinkedIn</a>
     </div>
-    <div id="glitch-cursor"></div>
+    <div class="cursor base"></div>
+    <div class="cursor red"></div>
+    <div class="cursor cyan"></div>
+
     <footer>
     </footer>
     <script>
-const cursor = document.getElementById("glitch-cursor");
-
-let mouseX = 0;
-let mouseY = 0;
-let glitchX = 0;
-let glitchY = 0;
-
-document.addEventListener("mousemove", (e) => {
-    mouseX = e.clientX;
-    mouseY = e.clientY;
-});
-
-// Glitch loop
-setInterval(() => {
-    // Random glitch offsets
-    const glitchIntensity = Math.random() > 0.7 ? 15 : 3;
-
-    glitchX = (Math.random() - 0.5) * glitchIntensity;
-    glitchY = (Math.random() - 0.5) * glitchIntensity;
-
-    cursor.style.left = mouseX + glitchX + "px";
-    cursor.style.top = mouseY + glitchY + "px";
-}, 30);
-
+    const base = document.querySelector(".cursor.base");
+    const red = document.querySelector(".cursor.red");
+    const cyan = document.querySelector(".cursor.cyan");
+    
+    let x = 0, y = 0;
+    
+    document.addEventListener("mousemove", (e) => {
+        x = e.clientX;
+        y = e.clientY;
+    });
+    
+    setInterval(() => {
+        const glitch = Math.random() > 0.8 ? 8 : 2;
+    
+        base.style.transform = `translate(${x}px, ${y}px)`;
+    
+        red.style.transform = `
+            translate(${x - Math.random() * glitch}px, ${y + Math.random() * glitch}px)
+        `;
+    
+        cyan.style.transform = `
+            translate(${x + Math.random() * glitch}px, ${y - Math.random() * glitch}px)
+        `;
+    }, 30);
     </script>
 </body>
     
 </html>
+
 
 
 
