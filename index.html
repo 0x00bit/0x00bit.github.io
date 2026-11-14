@@ -1,166 +1,349 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>me.txt</title>
-    <style>
-        :root {
-            --bg: #000;
-            --fg: #e9e9e9;
-            --accent: #29c107;
-            --muted: #888;
-        }
-        body {
-            margin: 0;
-            background: var(--bg);
-            color: var(--fg);
-            font-family: 'Fira Mono', monospace;
-            line-height: 1.6;
-            padding: 20px;
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        header {
-            text-align: center;
-            margin-bottom: 40px;
-            border-bottom: 1px solid var(--muted);
-            padding-bottom: 20px;
-        }
-        h1 {
-            color: var(--accent);
-            margin-bottom: 5px;
-        }
-        .tagline {
-            color: var(--muted);
-        } 
-        nav {
-            display: flex;
-            justify-content: center;
-            gap: 5rem; /* Increased spacing */
-            margin-bottom: 1rem;
-            padding: 0 1rem;
-        }
-        nav a {
-            color: var(--fg);
-            text-decoration: none;
-            letter-spacing: 0.09em; /* Better letter spacing */
-        }
-        nav a:hover {
-            color: var(--accent);
-        }
-        .language-list {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 1rem;
-            margin: 2rem 0;
-        }
-        .language {
-            color: var(--fg);
-            position: relative;
-            padding-left: 1.2rem;
-        }
-        .language::before {
-            content: "";
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 0.8rem;
-            height: 0.8rem;
-            border-radius: 50%;
-            background: currentColor;
-        }
-        .present-day {
-            text-align: center;
-            margin: 2rem 0;
-            font-size: 1.2em;
-            color: var(--muted);
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>me.txt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+<style>
+  /* 16-colour palette (EGA/VGA) */
+  :root{
+    --c-black:#000; --c-blue:#0000aa; --c-green:#00aa00; --c-cyan:#00aaaa; --c-red:#aa0000;
+    --c-brown:#aa5500; --c-gray:#aaaaaa; --c-dgray:#555555; --c-lblue:#5555ff; --c-lgreen:#55ff55;
+    --c-lcyan:#55ffff; --c-lred:#ff5555; --c-yellow:#ffff55; --c-white:#fff;
+    --mono:'VT323','Courier New',Courier,monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;overflow-x:hidden}
+  body{
+    margin:0; background:var(--c-lcyan); color:var(--c-blue);
+    font-family:var(--mono); font-size:22px; line-height:1.25;
+    padding:0 0 28px; min-height:100vh;
+    border:8px solid var(--c-cyan);
+  }
+  a{color:var(--c-blue)} a:hover{background:var(--c-blue);color:var(--c-white)}
+  a:focus-visible,button:focus-visible{outline:3px dashed var(--c-red);outline-offset:2px}
+  .pix{image-rendering:pixelated;image-rendering:crisp-edges}
 
-        .linkedin {
-            text-align: center;
-            margin-top: 3rem;
-        }
-        .linkedin a {
-            color: var(--accent);
-            text-decoration: none;
-        }
-        footer {
-            margin-top: 3rem;
-            text-align: center;
-            color: var(--muted);
-            font-size: 0.9em;
-        }
+  /* ---------- distro-style top panel with language buttons ---------- */
+  .panel{
+    position:sticky; top:0; z-index:50; display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+    padding:4px 8px; margin:-8px -8px 20px;
+    background:linear-gradient(#4a4a4a,#2c2c2c 55%,#222); border-bottom:2px solid #000;
+    color:#e8e8e8; font:15px/1.1 "DejaVu Sans","Bitstream Vera Sans",Verdana,sans-serif;
+  }
+  .panel .distro{font-weight:bold;letter-spacing:.02em;padding:0 6px;color:#fff;white-space:nowrap}
+  .panel .distro b{color:var(--c-lgreen)}
+  .langs{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}
+  .langs .lbl{align-self:center;padding-right:4px;color:#bbb}
+  .gbtn{
+    font:13px/1 "DejaVu Sans","Bitstream Vera Sans",Verdana,sans-serif; color:#222; cursor:pointer;
+    padding:5px 10px; border:1px solid #555; border-radius:3px;
+    background:linear-gradient(#fafafa,#e1e1e1 50%,#cfcfcf 51%,#dedede);
+    box-shadow:inset 0 1px #fff,0 1px 0 rgba(0,0,0,.4);
+  }
+  .gbtn:hover{background:linear-gradient(#fff,#ececec 50%,#dadada 51%,#e8e8e8)}
+  .gbtn[aria-pressed="true"]{
+    background:linear-gradient(#b9b9b9,#d2d2d2); box-shadow:inset 0 2px 3px rgba(0,0,0,.35); font-weight:bold;
+    border-color:#333;
+  }
+  #clock{font-size:14px;color:#ddd;padding:0 6px;white-space:nowrap;font-variant-numeric:tabular-nums}
 
-    /* remember to remove after december */
-    #snow {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    pointer-events: none; /* do not block clicks */
-    z-index: 9999;
-    }
+  /* ---------- windows ---------- */
+  .wrap{max-width:860px;margin:0 auto;padding:0 14px}
+  .win{margin:0 0 26px;background:var(--c-white);border:3px solid var(--c-blue);box-shadow:6px 6px 0 var(--c-cyan)}
+  .win > .bar{
+    background:var(--c-blue);color:var(--c-white);text-align:center;position:relative;
+    padding:0 40px;font-size:24px;letter-spacing:.08em;
+  }
+  .win > .bar::before{content:"";position:absolute;left:6px;top:7px;width:14px;height:14px;background:var(--c-white);border:3px solid var(--c-lcyan)}
+  .win > .bar::after{content:"X";position:absolute;right:6px;top:0;color:var(--c-lcyan)}
+  .win .in{padding:16px 18px}
+  h1,h2{margin:0;font-weight:normal}
+  h1{font-size:54px;line-height:1;color:var(--c-red);text-shadow:3px 3px 0 var(--c-gray);text-align:center}
+  h2{font-size:30px;color:var(--c-red)}
+  .tagline{text-align:center;color:var(--c-blue);margin-top:6px;font-size:26px}
+  nav{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 34px;margin-top:14px;padding-top:10px;border-top:3px double var(--c-blue)}
+  nav a{text-decoration:none;color:var(--c-blue);letter-spacing:.09em;padding:0 4px}
+  nav a:hover{background:var(--c-red);color:var(--c-white)}
 
-    </style>
+  /* hero */
+  .hero{display:grid;grid-template-columns:minmax(150px,230px) minmax(0,1fr);gap:22px;align-items:start}
+  .hero > div{min-width:0}
+  .hero .portrait{width:100%;height:auto;display:block;border:3px solid var(--c-blue);background:#fff}
+  #present-day{min-height:1.3em;font-size:28px;color:var(--c-blue)}
+  #present-day::after{content:"";display:inline-block;width:.55em;height:1em;background:var(--c-blue);margin-left:2px;vertical-align:-.12em;animation:blink 1s steps(1) infinite}
+  .gterm{margin-top:16px;background:#000;border:1px solid #000;box-shadow:5px 5px 0 var(--c-cyan)}
+  .gterm .gbar{display:flex;align-items:center;gap:6px;padding:5px 8px;background:linear-gradient(#5e5e5e,#3b3b3b);
+    color:#eee;font:13px/1 "DejaVu Sans","Bitstream Vera Sans",Verdana,sans-serif}
+  .gterm .gbar i{width:11px;height:11px;border-radius:50%;background:#aaa;display:block}
+  .gterm .gbar i:nth-child(1){background:#e0524a}.gterm .gbar i:nth-child(2){background:#e6b83c}.gterm .gbar i:nth-child(3){background:#5ec04f}
+  .gterm .gbar span{margin-left:6px}
+  .gterm pre{margin:0;padding:10px 12px 4px;color:var(--c-lgreen);font:17px/1.15 "Courier New",Courier,monospace;overflow-x:auto;white-space:pre}
+  .gterm .ps{color:var(--c-lcyan)}
+  .gterm .row2{padding:2px 12px 12px}
+  .tbtn.sm{font-size:19px;padding:0 10px}
+  .herosec{margin:0 0 30px}
+  .tbtn{font:22px var(--mono);background:var(--c-blue);color:#fff;border:3px outset var(--c-lblue);padding:2px 14px;cursor:pointer}
+  .tbtn:hover{background:var(--c-red);border-color:var(--c-lred)}
+  .tbtn:active{border-style:inset}
+
+  /* tree scene: framed picture, no title bar */
+  .win.pic{border:6px double var(--c-blue);box-shadow:none;background:var(--c-lcyan)}
+  /* tree scene */
+  .scene{position:relative;background:var(--c-lcyan);overflow:hidden;padding:0}
+  .scene .ground{position:absolute;left:0;right:0;bottom:0;height:34%;background:var(--c-yellow)}
+  .scene .tree{position:relative;display:block;margin:0 auto;width:min(330px,72%);height:auto;padding-top:14px}
+  .scene .term{
+    position:relative;margin:0;background:#000;color:var(--c-lgreen);border-top:3px solid var(--c-blue);
+    padding:12px 16px 14px;min-height:5.4em;font-size:24px;line-height:1.25;text-align:left;
+  }
+  .term .ps{color:var(--c-lcyan)}
+  .term .q{white-space:pre-wrap;word-break:break-word}
+  .term .cur{display:inline-block;width:.55em;height:1em;background:var(--c-lgreen);vertical-align:-.12em;animation:blink 1s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+
+  /* projects vault */
+  .vault{position:relative;background:#000;overflow:hidden;image-rendering:pixelated;font-family:"Courier New",Courier,monospace}
+  .vault::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:9;
+    background:repeating-linear-gradient(0deg,rgba(0,0,0,.28) 0 1px,transparent 1px 3px),
+               radial-gradient(ellipse at center,transparent 55%,rgba(0,0,0,.65) 100%)}
+  .stage .box{flex:none}
+  .stage{height:620px;display:flex;align-items:center;justify-content:center;perspective:1500px}
+  /* slide-box styles (from slide-box.html) */
+  :root{--W:520px; --D:400px; --H:56px;--wood-front:#8d3e1b; --wood-side:#6a2c12; --wood-back:#4b1e0c; --wood-lid:#93441f;--paper:#e6d9b8; --ink:#2b1409; --brass:#d9a82a; --brass-dk:#8c6510;}
+  .box,.box *{box-sizing:border-box;margin:0}
+  .box{position:relative;width:var(--W);height:var(--D);transform-style:preserve-3d;
+    transform:translateY(0) scale(var(--s,1)) rotateX(42deg);
+    transition:transform 1s steps(12);cursor:pointer}
+  .box.open{transform:translateY(calc(70px*var(--s,1))) scale(var(--s,1)) rotateX(42deg);cursor:default}
+  .box *{position:absolute;transform-style:preserve-3d}
+
+  /* walls (flat-shaded, wood grain from hard stripes) */
+  .grain{background-image:repeating-linear-gradient(90deg,rgba(0,0,0,.16) 0 2px,transparent 2px 7px)}
+  .floor{inset:0;background:var(--paper);border:10px solid var(--wood-back);
+    background-image:repeating-linear-gradient(0deg,rgba(60,30,10,.35) 0 1px,transparent 1px 6px);
+    background-size:100% 100%;background-position:0 0;
+    background-clip:padding-box}
+  .wall{background-color:var(--wood-side)}
+  .front{left:0;top:var(--D);width:var(--W);height:var(--H);transform-origin:50% 0;transform:rotateX(90deg);background-color:var(--wood-front)}
+  .back{left:0;top:calc(var(--H)*-1);width:var(--W);height:var(--H);transform-origin:50% 100%;transform:rotateX(-90deg);background-color:var(--wood-back)}
+  .left{left:calc(var(--H)*-1);top:0;width:var(--H);height:var(--D);transform-origin:100% 50%;transform:rotateY(90deg);background-color:var(--wood-side)}
+  .right{left:var(--W);top:0;width:var(--H);height:var(--D);transform-origin:0 50%;transform:rotateY(-90deg);background-color:#5a230f}
+  .clasp{left:calc(50% - 18px);top:6px;width:36px;height:40px;background:var(--brass);
+    border:3px solid var(--brass-dk);clip-path:polygon(0 0,100% 0,100% 70%,50% 100%,0 70%)}
+
+  /* lid */
+  .lid{left:0;top:0;width:var(--W);height:var(--D);transform-origin:50% 0;
+    transform:translateZ(var(--H)) rotateX(0deg);transition:transform 1.2s steps(14)}
+  .open .lid{transform:translateZ(var(--H)) rotateX(108deg)}
+  .face{inset:0;backface-visibility:hidden}
+  .lid .outer{background-color:var(--wood-lid);border:6px solid #5a230f;display:flex;
+    align-items:center;justify-content:center}
+  .lid .plate{position:relative;width:62%;padding:14px 10px;text-align:center;background:var(--paper);
+    border:3px solid var(--brass-dk);color:var(--ink);font-size:15px;font-weight:bold;letter-spacing:2px;line-height:1.5}
+  .lid .tab{left:calc(50% - 20px);bottom:0;width:40px;height:22px;background:var(--brass);
+    border:3px solid var(--brass-dk);border-bottom:0}
+  .lid .inner{transform:rotateY(180deg);background:#efe6cc;border:6px solid #5a230f;
+    background-image:repeating-linear-gradient(90deg,rgba(40,20,10,.45) 0 1px,transparent 1px 10px)}
+
+  /* slide rows: a flat strip on the floor = stable hit area + paper label */
+  .row{left:22px;width:calc(var(--W) - 44px);height:26px;display:block;text-decoration:none;color:var(--ink);
+    transform:translateZ(1px);--lift:0}
+  .row .txt{left:264px;top:0;right:0;height:26px;padding:1px 6px;overflow:hidden;white-space:nowrap;
+    text-overflow:ellipsis;font-size:11px;line-height:12px;border-left:3px solid var(--ink);
+    background:rgba(255,255,255,.12);transform:none}
+  .row .txt b{display:block;font-size:11px;position:static}
+  .row .txt i{display:block;font-style:normal;font-size:10px;opacity:.8;position:static;overflow:hidden;text-overflow:ellipsis}
+  .row.hot .txt{background:#b8321f;color:#fff3dc;border-left-color:#ffd24a}
+
+  /* the glass slide stands up from the floor */
+  .glass{left:0;bottom:6px;width:250px;height:50px;transform-origin:50% 100%;pointer-events:none;
+    transform:translateZ(calc(var(--lift)*1px)) rotateX(-84deg);
+    transition:transform .45s steps(6);
+    background:linear-gradient(rgba(205,240,225,.55),rgba(150,205,190,.3));
+    border:1px solid rgba(235,255,248,.85);box-shadow:0 0 6px rgba(170,230,210,.25)}
+  .glass::before{content:"";left:0;top:0;width:100%;height:13px;background:rgba(255,255,255,.75)}
+  .glass::before,.glass::after{position:absolute;display:block}
+  .glass::after{content:"";left:calc(50% - 22px);top:8px;width:44px;height:44px;
+    background:url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%20100%20100'%3E%3Cdefs%3E%3CradialGradient%20id='g'%20cx='48%'%20cy='48%'%20r='55%'%3E%3Cstop%20offset='0'%20stop-color='%237a0a0a'%20stop-opacity='.55'/%3E%3Cstop%20offset='.6'%20stop-color='%23650606'%20stop-opacity='.7'/%3E%3Cstop%20offset='.9'%20stop-color='%23350202'%20stop-opacity='.85'/%3E%3Cstop%20offset='1'%20stop-color='%23250101'%20stop-opacity='.9'/%3E%3C/radialGradient%3E%3Cfilter%20id='r'%20x='-30%'%20y='-30%'%20width='160%'%20height='160%'%3E%3CfeTurbulence%20type='fractalNoise'%20baseFrequency='.032'%20numOctaves='4'%20seed='11'%20result='n'/%3E%3CfeDisplacementMap%20in='SourceGraphic'%20in2='n'%20scale='34'/%3E%3C/filter%3E%3Cfilter%20id='b'%3E%3CfeGaussianBlur%20stdDeviation='.8'/%3E%3C/filter%3E%3Cpath%20id='d'%20d='M50%2050L50%2014M50%2032L43%2022M50%2032L58%2021M50%2042L40%2033M50%2042L61%2034'/%3E%3C/defs%3E%3Cg%20filter='url(%23r)'%20opacity='.8'%3E%3Ccircle%20cx='50'%20cy='50'%20r='32'%20fill='url(%23g)'/%3E%3Ccircle%20cx='50'%20cy='50'%20r='32'%20fill='none'%20stroke='%23200000'%20stroke-width='3'%20opacity='.55'/%3E%3Ccircle%20cx='20'%20cy='28'%20r='4'%20fill='%23600505'%20opacity='.7'/%3E%3Ccircle%20cx='82'%20cy='64'%20r='3'%20fill='%23600505'%20opacity='.7'/%3E%3Ccircle%20cx='70'%20cy='15'%20r='2.2'%20fill='%23600505'%20opacity='.6'/%3E%3Cg%20stroke='%23220000'%20stroke-opacity='.35'%20stroke-width='1'%20fill='none'%20filter='url(%23b)'%3E%3Cuse%20href='%23d'/%3E%3Cuse%20href='%23d'%20transform='rotate(40%2050%2050)'/%3E%3Cuse%20href='%23d'%20transform='rotate(80%2050%2050)'/%3E%3Cuse%20href='%23d'%20transform='rotate(120%2050%2050)'/%3E%3Cuse%20href='%23d'%20transform='rotate(160%2050%2050)'/%3E%3Cuse%20href='%23d'%20transform='rotate(200%2050%2050)'/%3E%3Cuse%20href='%23d'%20transform='rotate(240%2050%2050)'/%3E%3Cuse%20href='%23d'%20transform='rotate(280%2050%2050)'/%3E%3Cuse%20href='%23d'%20transform='rotate(320%2050%2050)'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E") center/100% 100% no-repeat}
+
+  .row.hot .glass{border-color:#fff;box-shadow:0 0 14px rgba(255,255,255,.7)}
+  .vault .hint{position:absolute;left:0;right:0;bottom:22px;text-align:center;color:#d9a82a;
+    font:16px "Courier New",monospace;letter-spacing:3px;z-index:5;pointer-events:none}
+  .vault .hint.hidden{display:none}
+  .vault .close{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);z-index:10;display:none;
+    background:#000;color:#d9a82a;border:2px solid #d9a82a;padding:6px 14px;font:14px "Courier New",monospace;
+    letter-spacing:2px;cursor:pointer}
+  .vault .close.show{display:block}
+  .vault .close:hover{background:#d9a82a;color:#000}
+  .reader{background:#000;color:#d9a82a;border-top:3px solid var(--c-blue);padding:8px 14px;min-height:3.6em;font-size:22px;line-height:1.15}
+  .reader b{color:#fff;font-weight:normal}
+  .plist{display:none;margin:0;padding:10px 14px;list-style:none;background:#000;color:#d9a82a;border-top:1px dashed #d9a82a}
+  .plist a{color:#ffd24a}.plist a:hover{background:#d9a82a;color:#000}
+  .plist li{margin:4px 0}
+  .intro{margin:0 0 12px}
+  .vaultwin{margin:0 0 30px;border:5px solid var(--wood-back);outline:3px solid #000;background:#000;box-shadow:6px 6px 0 var(--c-cyan)}
+  .vaultwin .label{background:linear-gradient(#e0b43a,#c8991f);color:#2b1409;text-align:center;letter-spacing:.25em;border-bottom:3px solid #8c6510;font-size:22px}
+  /* contact: plain terminal */
+  .ct{margin:0 0 30px;background:#000;color:var(--c-lgreen);padding:14px 18px;border-left:8px solid var(--c-red);
+    font:22px/1.35 "Courier New",Courier,monospace;word-break:break-word}
+  .ct .ps{color:var(--c-lcyan)}
+  .ct a{color:var(--c-yellow)} .ct a:hover{background:var(--c-yellow);color:#000}
+  .ct .cur{display:inline-block;width:.6em;height:1em;background:var(--c-lgreen);vertical-align:-.15em;animation:blink 1s steps(1) infinite}
+  /* links: dashed old-web strip */
+  .webring{margin:0 0 20px;padding:16px 4px 18px;border-top:2px dashed var(--c-blue);border-bottom:2px dashed var(--c-blue)}
+
+  /* gallery / links */
+  .galx{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;align-items:flex-start}
+  .gal figure{margin:0;text-align:center}
+  .gal img{display:block;border:3px solid var(--c-blue);max-width:100%;height:auto;background:#fff}
+  .gal figcaption{font-size:20px;color:var(--c-dgray);margin-top:4px}
+  .kern{text-align:center;margin:0 0 12px;font-size:26px}
+  .btns{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;align-items:center;margin-top:8px}
+  .btns img{display:block;width:88px;height:31px;border:0;image-rendering:pixelated}
+  .btns a:hover{background:none;outline:3px solid var(--c-red)}
+  .contact{text-align:center;font-size:28px}
+  footer{text-align:center;color:var(--c-dgray);font-size:20px;margin-top:6px}
+
+  @media (max-width:640px){
+    body{font-size:20px;border-width:5px}
+    .panel{margin:-5px -5px 14px;gap:6px}
+    .langs{margin-left:0;width:100%}
+    .gbtn{flex:1 1 auto;padding:7px 3px;font-size:12px}
+    .langs{flex-wrap:nowrap}
+    .langs .lbl{display:none}
+    #clock{display:none}
+    .wrap{padding:0 8px}
+    h1{font-size:40px}
+    .tagline{font-size:21px}
+    nav{gap:2px 16px}
+    .hero{grid-template-columns:minmax(0,1fr)}
+    .hero .portrait{max-width:210px;margin:0 auto}
+    .win{box-shadow:4px 4px 0 var(--c-cyan)}
+    .win .in{padding:12px 10px}
+    .stage{height:470px}
+    .plist{display:block}
+    .scene .term{font-size:21px}
+  }
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    .box,.lid,.glass{transition-duration:.01s}
+    #present-day::after,.term .cur{animation:none}
+  }
+</style>
 </head>
 <body>
-    
-    <header>
-        <h1>Magnus Junior</h1>
-        <div class="tagline">DevOps | Comp. Networks | CTF Player</div>
-        <br/>
-        <nav>
-            <a href="https://0x00bit.github.io/articles.html">Articles</a>
-            <a href="writeups.html">Write-ups</a>
-            <a href="https://github.com/0x00bit?tab=repositories">Programming</a>
-            <a href="#projects">Projects</a>
-            <a href="#contact">Contact</a>
-        </nav>
 
+<div class="panel" role="toolbar" aria-label="Language">
+  <span class="distro"><b>&#9679;</b> 0x00bit&nbsp;GNU/Linux</span>
+  <div class="langs" id="langs">
+    <span class="lbl" data-i18n="lang">Language</span>
+    <button class="gbtn" data-lang="pt" aria-pressed="false">Português</button>
+    <button class="gbtn" data-lang="es" aria-pressed="false">Español</button>
+    <button class="gbtn" data-lang="fr" aria-pressed="false">Français</button>
+    <button class="gbtn" data-lang="ru" aria-pressed="false">Русский</button>
+    <button class="gbtn" data-lang="en" aria-pressed="true">English</button>
+  </div>
+  <span id="clock"></span>
+</div>
+
+<div class="wrap">
+
+  <section class="win">
+    <div class="bar">me.txt</div>
+    <header class="in">
+      <h1>Magnus Junior</h1>
+      <div class="tagline">DevOps | Comp. Networks | CTF Player</div>
+      <nav>
+        <a href="https://0x00bit.github.io/articles.html" data-i18n="nav_articles">Articles</a>
+        <a href="writeups.html" data-i18n="nav_writeups">Write-ups</a>
+        <a href="https://github.com/0x00bit?tab=repositories" data-i18n="nav_programming">Programming</a>
+        <a href="#projects" data-i18n="nav_projects">Projects</a>
+        <a href="#contact" data-i18n="nav_contact">Contact</a>
+      </nav>
     </header>
+  </section>
 
-        <div class="language-list">
-            <span class="language" style="color: #3572A5">Python</span>
-            <span class="language" style="color: #555555">C</span>
-            <span class="language" style="color: #3178c6">Powershell</span>
-            <span class="language" style="color: #89e051">Shell</span>
-            <span class="language" style="color: #4F5D95">PHP</span>
-            <span class="language" style="color: #be0303">Ruby</span>
-            <span class="language" style="color: #132a9c">Lua</span>
-            <!-- <span class="language" style="color: #b07219">Java</span> -->
+  <section class="herosec">
+    <div class="hero">
+      <img class="pix portrait" src="./assets/lain-ascii.png" alt="Lain, pixel portrait" width="58" height="72">
+      <div>
+        <div id="present-day" class="present-day"></div>
+        <div class="gterm">
+          <div class="gbar"><i></i><i></i><i></i><span>cowsay.sh &mdash; bash</span></div>
+          <pre><span class="ps">0x00bit$ </span>./cowsay.sh</pre>
+          <pre id="cow" aria-live="polite"></pre>
+          <div class="row2"><button class="tbtn sm" id="cowbtn" type="button">./cowsay.sh</button></div>
         </div>
-
-    <div id="present-day" class="present-day"></div>
-    <script src="script.js"></script>
-
-    <pre style="text-align: center; font-size: 0.6em; color: white;">
-         <img src="./assets/lainmadruga.jpg">
-    </pre>
-    
-    <div class="linkedin">
-        <a href="https://www.linkedin.com/in/magnus-jr/" target="_blank">My LinkedIn</a>
+      </div>
     </div>
-    <footer>
-    </footer>
+  </section>
+
+  <section class="win pic">
+    <div class="scene">
+      <div class="ground"></div>
+      <img class="pix tree" src="./assets/tree.png" alt="A lone tree" width="110" height="152">
+      <pre class="term" id="term"><span class="ps">user@0x00bit:~$ </span><span class="q" id="quote"></span><span class="cur"></span></pre>
+    </div>
+  </section>
+
+  <section class="vaultwin" id="projects">
+    <div class="label" data-i18n="nav_projects">Projects</div>
+    <div class="vault" id="vault">
+      <div class="stage">
+        <div class="box" id="box" role="button" tabindex="0" aria-label="Open the slide box">
+          <div class="floor"></div>
+          <div class="wall grain back"></div>
+          <div class="wall grain left"></div>
+          <div class="wall grain right"></div>
+          <div id="rows"></div>
+          <div class="wall grain front"><div class="clasp"></div></div>
+          <div class="lid">
+            <div class="face outer grain">
+              <div class="plate" id="plate">COLLECTION</div>
+              <div class="tab"></div>
+            </div>
+            <div class="face inner"></div>
+          </div>
+        </div>
+      </div>
+      <div class="hint" id="hint" data-i18n="open">Open</div>
+      <button class="close" id="close" type="button" data-i18n="close">[ CLOSE BOX ]</button>
+    </div>
+    <div class="reader" id="reader" aria-live="polite"></div>
+    <ul class="plist" id="plist"></ul>
+  </section>
+
+  <section class="ct" id="contact">
+    <div><span class="ps">0x00bit$ </span>cat contact.txt</div>
+    <div class="linkedin"><a href="https://www.linkedin.com/in/magnus-jr/" target="_blank" data-i18n="linkedin">My LinkedIn</a></div>
+    <div><span class="ps">0x00bit$ </span><span class="cur"></span></div>
+  </section>
+
+  <section class="webring">
+    <div>
+      <p class="kern"><a href="https://kernel.org/" target="_blank" rel="noopener">kernel.org</a> <span data-i18n="kernel">The Linux Kernel Archives</span></p>
+      <div class="btns">
+        <a href="https://kernel.org/" target="_blank" rel="noopener"><img src="./assets/buttons/kernel.gif" alt="kernel.org" width="88" height="31"></a>
+        <img src="./assets/buttons/linux_powered.gif" alt="Linux powered" width="88" height="31">
+        <img src="./assets/buttons/debian2.gif" alt="Debian" width="88" height="31">
+        <img src="./assets/buttons/button207.gif" alt="terminal prompt" width="88" height="31">
+        <img src="./assets/buttons/vi.gif" alt=":wq" width="88" height="31">
+        <img src="./assets/buttons/68ch11now.jpg" alt="68ch11 now" width="88" height="31">
+        <img src="./assets/buttons/button93.gif" alt="I lift" width="88" height="31">
+        <img src="./assets/buttons/brave.gif" alt="Get Brave" width="88" height="31">
+        <img src="./assets/buttons/freestuff.gif" alt="Free stuff" width="88" height="31">
+        <img src="./assets/buttons/templeos.gif" alt="God says" width="88" height="31">
+      </div>
+    </div>
+  </section>
+
+  <footer></footer>
+</div>
+
+<script src="script.js"></script>
 </body>
-    
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
