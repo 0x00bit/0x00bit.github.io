@@ -149,7 +149,7 @@ const SLIDES = [
   { title:"C-web-server",    text:"p1", url:"https://github.com/0x00bit/C-web-server",    target:"_blank" },
   { title:"simple-webshell", text:"p2", url:"https://github.com/0x00bit/simple-webshell", target:"_blank" },
   { title:"FirstKernel",     text:"p3", url:"https://github.com/0x00bit/FirstKernel",     target:"_blank" },
-  { title:"Slide 04", text:"soon", url:"https://example.com/4",  target:"_self" },
+  { title:"Doom in a Router", text:"p4", url:"https://github.com/0x00bit/Doom-Router",  target:"_self" },
   { title:"Slide 05", text:"soon", url:"https://example.com/5",  target:"_self" },
   { title:"Slide 06", text:"soon", url:"https://example.com/6",  target:"_self" },
   { title:"Slide 07", text:"soon", url:"https://example.com/7",  target:"_self" },
